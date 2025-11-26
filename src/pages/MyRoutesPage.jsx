@@ -1,0 +1,172 @@
+import React, { useEffect, useState } from 'react';
+import { useToast } from '../context/ToastContext.jsx';
+import * as api from '../api/routes.js';
+import Modal from '../components/Modal.jsx';
+import Confirm from '../components/Confirm.jsx';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { routeSchema } from '../utils/validators.js';
+import { toUnixSeconds, formatUnix } from '../utils/formatters.js';
+
+export default function MyRoutesPage() {
+  const toast = useToast();
+  const [routes, setRoutes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+
+  const form = useForm({
+    resolver: yupResolver(routeSchema),
+    defaultValues: {
+      Start: '',
+      End: '',
+      Stops: '',
+      DateAndTime: '',
+      OccupiedSeats: 0,
+      Comment: ''
+    }
+  });
+
+  async function refresh() {
+    setLoading(true);
+    try {
+      const data = await api.listRoutes();
+      setRoutes(data || []);
+    } catch (err) {
+      toast.push('error', err.message || 'Failed to load routes');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { refresh(); }, []);
+
+  function openAdd() {
+    setEditing(null);
+    form.reset({
+      Start: '',
+      End: '',
+      Stops: '',
+      DateAndTime: '',
+      OccupiedSeats: 0,
+      Comment: ''
+    });
+    setShowForm(true);
+  }
+
+  function openEdit(item) {
+    setEditing(item);
+    form.reset({
+      Start: item.Start,
+      End: item.End,
+      Stops: item.Stops,
+      DateAndTime: item.DateAndTime,
+      OccupiedSeats: item.OccupiedSeats,
+      Comment: item.Comment || ''
+    });
+    setShowForm(true);
+  }
+
+  async function onSubmit(values) {
+    const payload = { ...values, DateAndTime: toUnixSeconds(values.DateAndTime) };
+    try {
+      if (editing) {
+        const updated = await api.updateRoute(editing.RouteID, payload);
+        setRoutes(routes.map(r => r.RouteID === editing.RouteID ? updated : r));
+        toast.push('success', 'Route updated');
+      } else {
+        const created = await api.createRoute(payload);
+        setRoutes([...routes, created]);
+        toast.push('success', 'Route created');
+      }
+      setShowForm(false);
+    } catch (err) {
+      toast.push('error', err.message || 'Route save failed');
+    }
+  }
+
+  async function performDelete() {
+    try {
+      await api.deleteRoute(confirmDelete.RouteID);
+      setRoutes(routes.filter(r => r.RouteID !== confirmDelete.RouteID));
+      toast.push('success', 'Route deleted');
+    } catch (err) {
+      toast.push('error', err.message || 'Delete failed');
+    } finally {
+      setConfirmDelete(null);
+    }
+  }
+
+  return (
+    <div className="container">
+      <div className="panel">
+        <div className="flex space">
+          <h2>My Routes</h2>
+          <button onClick={openAdd}>Create Route</button>
+        </div>
+        {loading && <p>Loading routes...</p>}
+        {!loading && routes.length === 0 && <p>No routes available.</p>}
+        <div className="grid cols-2">
+          {routes.map(r => (
+            <div className="card" key={r.RouteID}>
+              <h4>{r.Start} → {r.End}</h4>
+              <small>Stops: {r.Stops}</small>
+              <small>Departure: {formatUnix(r.DateAndTime)}</small>
+              <small>Seats occupied: {r.OccupiedSeats}</small>
+              <div style={{ marginTop: '.4rem' }}>{r.Comment}</div>
+              <div className="actions" style={{ marginTop: '.5rem' }}>
+                <button onClick={() => openEdit(r)}>Edit</button>
+                <button className="close-btn" onClick={() => setConfirmDelete(r)}>Delete</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Modal
+        open={showForm}
+        onClose={() => setShowForm(false)}
+        title={editing ? 'Edit Route' : 'Create Route'}
+      >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid" style={{ gap: '.75rem' }}>
+          <label>Start
+            <input {...form.register('Start')} />
+            {form.formState.errors.Start && <div className="form-error">{form.formState.errors.Start.message}</div>}
+          </label>
+          <label>End
+            <input {...form.register('End')} />
+            {form.formState.errors.End && <div className="form-error">{form.formState.errors.End.message}</div>}
+          </label>
+          <label>Stops
+            <input {...form.register('Stops')} />
+            {form.formState.errors.Stops && <div className="form-error">{form.formState.errors.Stops.message}</div>}
+          </label>
+          <label>Date & Time (unix seconds)
+            <input type="number" {...form.register('DateAndTime')} />
+            {form.formState.errors.DateAndTime && <div className="form-error">{form.formState.errors.DateAndTime.message}</div>}
+          </label>
+          <label>Occupied Seats
+            <input type="number" {...form.register('OccupiedSeats')} />
+            {form.formState.errors.OccupiedSeats && <div className="form-error">{form.formState.errors.OccupiedSeats.message}</div>}
+          </label>
+          <label>Comment
+            <textarea rows={3} {...form.register('Comment')} />
+          </label>
+          <div className="actions">
+            <button type="submit">{editing ? 'Update' : 'Create'}</button>
+            <button type="button" className="close-btn" onClick={() => setShowForm(false)}>Cancel</button>
+          </div>
+        </form>
+      </Modal>
+
+      <Confirm
+        open={!!confirmDelete}
+        title="Delete Route"
+        message="Are you sure you want to delete this route?"
+        onConfirm={performDelete}
+        onCancel={() => setConfirmDelete(null)}
+      />
+    </div>
+  );
+}
