@@ -1,26 +1,76 @@
 import * as usersApi from '../api/users.js';
 
 /**
- * Resolve a username to a numeric UserID using /users?Name=
- * Rules:
- *  - Case-insensitive exact match preferred.
- *  - If multiple exact matches (rare) uses first.
- *  - If no exact matches but partial matches exist, throws telling user to be more specific.
+ * Classify username input against user list.
+ * Returns an object with status:
+ *  - 'notfound'
+ *  - 'exact' (single exact match) { match }
+ *  - 'duplicates' (multiple exact matches) { matches: [...] }
+ *  - 'partial-ambiguous' (no exact, multiple partial matches) { matches: [...] }
+ *  - 'partial-single' (no exact, exactly one partial) { match }
+ *
+ * Exact match rule: case-insensitive equality of Name.
+ * Partial match rule: Name contains input substring (case-insensitive).
+ *
  * @param {string} username
- * @returns {Promise<number>}
- * @throws Error if not found or ambiguous
+ * @returns {Promise<{status:string, match?:object, matches?:object[]}>}
  */
-export async function resolveUsernameToId(username) {
-  const trimmed = (username || '').trim();
-  if (!trimmed) throw new Error('Username is empty');
-  const results = await usersApi.listUsers(trimmed);
-  if (!Array.isArray(results) || results.length === 0) {
-    throw new Error(`No user found with username "${trimmed}"`);
+export async function classifyUsername(username) {
+  const term = (username || '').trim();
+  if (!term) return { status: 'notfound' };
+
+  // Fetch possible matches (server performs substring filter)
+  const results = await usersApi.listUsers(term) || [];
+
+  if (results.length === 0) {
+    return { status: 'notfound' };
   }
-  // Try exact match (case-insensitive)
-  const exact = results.filter(u => u.Name?.toLowerCase() === trimmed.toLowerCase());
-  if (exact.length === 1) return exact[0].UserID;
-  if (exact.length > 1) return exact[0].UserID; // choose first; could refine if needed
-  // No exact match, but partial matches present -> ask user to be more specific
-  throw new Error(`Ambiguous username. Found ${results.length} partial match(es); please enter exact username.`);
+
+  const exact = results.filter(u => u.Name?.toLowerCase() === term.toLowerCase());
+  if (exact.length === 1) {
+    return { status: 'exact', match: exact[0] };
+  }
+  if (exact.length > 1) {
+    return { status: 'duplicates', matches: exact };
+  }
+
+  // No exact matches; identify partial matches (defensive, though results already partial)
+  const partial = results.filter(u => u.Name?.toLowerCase().includes(term.toLowerCase()));
+  if (partial.length === 1) {
+    return { status: 'partial-single', match: partial[0] };
+  }
+  if (partial.length > 1) {
+    return { status: 'partial-ambiguous', matches: partial };
+  }
+
+  return { status: 'notfound' };
+}
+
+/**
+ * Convenience function to resolve a username to an ID or produce a disambiguation result.
+ * Returns:
+ *  - { resolvedUserID } when unambiguous
+ *  - { disambiguate: true, candidates: [...] } when user must choose
+ *  - { error: 'message' } on failure
+ * @param {string} username
+ */
+export async function resolveUsernameForReview(username) {
+  const classification = await classifyUsername(username);
+
+  switch (classification.status) {
+    case 'exact':
+      return { resolvedUserID: classification.match.UserID };
+    case 'duplicates':
+      return { disambiguate: true, candidates: classification.matches };
+    case 'partial-ambiguous':
+      return { disambiguate: true, candidates: classification.matches };
+    case 'partial-single':
+      // Force user to type exact to reduce misattribution risk
+      return {
+        error: `Found one partial match ("${classification.match.Name}") but no exact match. Please enter the exact username.`
+      };
+    case 'notfound':
+    default:
+      return { error: 'No user found with that username.' };
+  }
 }
