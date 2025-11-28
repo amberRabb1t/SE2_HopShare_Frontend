@@ -26,6 +26,29 @@ export function toUnixSeconds(input) {
   if (input === undefined || input === null || input === '') return undefined;
   const n = Number(input);
   if (!Number.isFinite(n)) return undefined;
-  // If already seconds (1.7e9 range) keep; if ms (>= 10_000_000_000) divide.
   return n > 10_000_000_000 ? Math.floor(n / 1000) : n;
+}
+
+/**
+ * Parse datetime-local string (e.g. "2025-12-31T18:30") to unix seconds.
+ * Returns undefined if invalid.
+ */
+export function parseDateTimeToUnix(value) {
+  if (!value || typeof value !== 'string') return undefined;
+  const d = new Date(value);
+  const ms = d.getTime();
+  if (!Number.isFinite(ms)) return undefined;
+  return Math.floor(ms / 1000);
+}
+
+/**
+ * Parse date string (e.g. "2025-12-31") to unix seconds (00:00 local time).
+ * Returns undefined if invalid.
+ */
+export function parseDateToUnix(value) {
+  if (!value || typeof value !== 'string') return undefined;
+  const d = new Date(value + 'T00:00');
+  const ms = d.getTime();
+  if (!Number.isFinite(ms)) return undefined;
+  return Math.floor(ms / 1000);
 }

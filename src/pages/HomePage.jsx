@@ -22,12 +22,12 @@ export default function HomePage() {
               <h4>My Cars</h4>
               <small>Register & edit vehicles</small>
             </Link>
-            <Link to="/my-routes" className="card">
-              <h4>My Routes</h4>
+            <Link to="/routes" className="card">
+              <h4>Routes</h4>
               <small>Create, update & list routes</small>
             </Link>
-            <Link to="/my-requests" className="card">
-              <h4>My Requests</h4>
+            <Link to="/requests" className="card">
+              <h4>Requests</h4>
               <small>Publish travel demands</small>
             </Link>
             <Link to="/reviews" className="card">

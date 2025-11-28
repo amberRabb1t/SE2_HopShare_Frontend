@@ -3,8 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from '../pages/HomePage.jsx';
 import LoginPage from '../pages/LoginPage.jsx';
 import MyCarsPage from '../pages/MyCarsPage.jsx';
-import MyRoutesPage from '../pages/MyRoutesPage.jsx';
-import MyRequestsPage from '../pages/MyRequestsPage.jsx';
+import RoutesPage from '../pages/RoutesPage.jsx';
+import RequestsPage from '../pages/RequestsPage.jsx';
 import ReviewsPage from '../pages/ReviewsPage.jsx';
 import UserProfilePage from '../pages/UserProfilePage.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
@@ -25,18 +25,18 @@ export default function AppRouter() {
         }
       />
       <Route
-        path="/my-routes"
+        path="/routes"
         element={
           <ProtectedRoute>
-            <MyRoutesPage />
+            <RoutesPage />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/my-requests"
+        path="/requests"
         element={
           <ProtectedRoute>
-            <MyRequestsPage />
+            <RequestsPage />
           </ProtectedRoute>
         }
       />
