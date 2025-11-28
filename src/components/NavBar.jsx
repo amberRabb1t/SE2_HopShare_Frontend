@@ -13,8 +13,8 @@ export default function NavBar() {
         {email && (
           <>
             <Link to="/my-cars" className={loc.pathname.startsWith('/my-cars') ? 'active' : ''}>My Cars</Link>
-            <Link to="/my-routes">My Routes</Link>
-            <Link to="/my-requests">My Requests</Link>
+            <Link to="/routes">Routes</Link>
+            <Link to="/requests">Requests</Link>
             <Link to="/reviews">Reviews</Link>
           </>
         )}

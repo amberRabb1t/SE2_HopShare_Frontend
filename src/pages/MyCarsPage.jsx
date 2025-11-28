@@ -7,14 +7,14 @@ import Confirm from '../components/Confirm.jsx';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { carSchema } from '../utils/validators.js';
-import { toUnixSeconds, formatUnix } from '../utils/formatters.js';
+import { parseDateToUnix, formatUnix } from '../utils/formatters.js';
+import * as usersApi from '../api/users.js';
 
 export default function MyCarsPage() {
   const toast = useToast();
-  const { user, email } = useAuth();
+  const { user, email, setUser } = useAuth();
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const [editingCar, setEditingCar] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
@@ -29,11 +29,28 @@ export default function MyCarsPage() {
     }
   });
 
+  async function ensureUserID() {
+    if (user?.UserID) return user.UserID;
+    if (!email) return undefined;
+    try {
+      const all = await usersApi.listUsers();
+      const found = all.find(u => u.Email?.toLowerCase() === email.toLowerCase());
+      if (found) {
+        setUser(found);
+        return found.UserID;
+      }
+    } catch {
+      // swallow
+    }
+    return undefined;
+  }
+
   async function refresh() {
-    if (!user?.UserID) return;
+    const id = await ensureUserID();
+    if (!id) return;
     setLoading(true);
     try {
-      const data = await api.listCars(user.UserID);
+      const data = await api.listCars(id);
       setCars(data || []);
     } catch (err) {
       toast.push('error', err.message || 'Failed to load cars');
@@ -43,17 +60,8 @@ export default function MyCarsPage() {
   }
 
   useEffect(() => {
-    // Fetch user object by email (approx by listing users and matching)
-    async function hydrateUser() {
-      if (!user?.Email && email) {
-        // This page expects user.UserID; fallback: find by Name not viable -> create dummy
-        // For demonstration, assume userID=1 if email=alice@example.com etc.
-      }
-    }
-    hydrateUser();
     refresh();
-    // eslint-disable-next-line
-  }, [user?.UserID]);
+  }, [user?.UserID, email]);
 
   function openAdd() {
     setEditingCar(null);
@@ -63,9 +71,10 @@ export default function MyCarsPage() {
 
   function openEdit(car) {
     setEditingCar(car);
+    const dateLocal = car.ServiceDate ? new Date(car.ServiceDate * 1000).toISOString().slice(0,10) : '';
     form.reset({
       Seats: car.Seats,
-      ServiceDate: car.ServiceDate,
+      ServiceDate: dateLocal,
       MakeModel: car.MakeModel,
       LicensePlate: car.LicensePlate
     });
@@ -73,17 +82,22 @@ export default function MyCarsPage() {
   }
 
   async function onSubmit(values) {
+    const userID = await ensureUserID();
+    if (!userID) {
+      toast.push('error', 'User ID not resolved; cannot save car');
+      return;
+    }
     const payload = {
       ...values,
-      ServiceDate: toUnixSeconds(values.ServiceDate)
+      ServiceDate: parseDateToUnix(values.ServiceDate)
     };
     try {
       if (editingCar) {
-        const updated = await api.updateCar(user.UserID, editingCar.CarID, payload);
+        const updated = await api.updateCar(userID, editingCar.CarID, payload);
         setCars(cars.map(c => c.CarID === editingCar.CarID ? updated : c));
         toast.push('success', 'Car updated');
       } else {
-        const created = await api.createCar(user.UserID, payload);
+        const created = await api.createCar(userID, payload);
         setCars([...cars, created]);
         toast.push('success', 'Car added');
       }
@@ -94,8 +108,14 @@ export default function MyCarsPage() {
   }
 
   async function performDelete() {
+    const userID = user?.UserID;
+    if (!userID) {
+      toast.push('error', 'User ID not resolved; cannot delete');
+      setConfirmDelete(null);
+      return;
+    }
     try {
-      await api.deleteCar(user.UserID, confirmDelete.CarID);
+      await api.deleteCar(userID, confirmDelete.CarID);
       setCars(cars.filter(c => c.CarID !== confirmDelete.CarID));
       toast.push('success', 'Car deleted');
     } catch (err) {
@@ -110,10 +130,11 @@ export default function MyCarsPage() {
       <div className="panel">
         <div className="flex space">
           <h2>My Cars</h2>
-          <button onClick={openAdd}>Add Car</button>
+          <button onClick={openAdd} disabled={!user?.UserID}>Add Car</button>
         </div>
+        {!user?.UserID && <p>Resolving user ID...</p>}
         {loading && <p>Loading cars...</p>}
-        {!loading && cars.length === 0 && <p>No cars yet.</p>}
+        {!loading && cars.length === 0 && user?.UserID && <p>No cars yet.</p>}
         <div className="grid cols-2">
           {cars.map(c => (
             <div key={c.CarID} className="card">
@@ -143,8 +164,8 @@ export default function MyCarsPage() {
             <input type="number" {...form.register('Seats')} />
             {form.formState.errors.Seats && <div className="form-error">{form.formState.errors.Seats.message}</div>}
           </label>
-          <label>Service Date (unix seconds)
-            <input type="number" {...form.register('ServiceDate')} />
+          <label>Service Date
+            <input type="date" {...form.register('ServiceDate')} />
             {form.formState.errors.ServiceDate && <div className="form-error">{form.formState.errors.ServiceDate.message}</div>}
           </label>
           <label>License Plate
@@ -152,7 +173,7 @@ export default function MyCarsPage() {
             {form.formState.errors.LicensePlate && <div className="form-error">{form.formState.errors.LicensePlate.message}</div>}
           </label>
           <div className="actions">
-            <button type="submit">{editingCar ? 'Update' : 'Add'}</button>
+            <button type="submit" disabled={!user?.UserID}>{editingCar ? 'Update' : 'Add'}</button>
             <button type="button" className="close-btn" onClick={() => setShowForm(false)}>Cancel</button>
           </div>
         </form>
