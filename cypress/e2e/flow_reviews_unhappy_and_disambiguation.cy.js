@@ -19,6 +19,7 @@ describe('Reviews (unhappy + disambiguation happy path)', () => {
     cy.get('button[type="submit"]').click();
 
     // Reviews
+    cy.contains('Welcome to HopShare').should('be.visible'); // ensure login completed
     cy.contains('Reviews').click();
     cy.url().should('include', '/reviews');
 
@@ -39,6 +40,7 @@ describe('Reviews (unhappy + disambiguation happy path)', () => {
     cy.get('button[type="submit"]').click();
 
     // Reviews
+    cy.contains('Welcome to HopShare').should('be.visible'); // ensure login completed
     cy.contains('Reviews').click();
     cy.contains('Write Review').click();
 

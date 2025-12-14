@@ -17,6 +17,7 @@ describe('Manage Requests (happy path)', () => {
     cy.get('button[type="submit"]').click();
 
     // Requests
+    cy.contains('Welcome to HopShare').should('be.visible'); // ensure login completed
     cy.contains('Requests').click();
     cy.url().should('include', '/requests');
 

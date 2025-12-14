@@ -11,8 +11,8 @@
     "lint": "eslint src --ext .js,.jsx",
     "format": "prettier --write \"src/**/*.{js,jsx,css,md,json}\"",
     "cypress:open": "cypress open",
-    "test:e2e": "cypress run --browser electron --headed",
-    "test:e2e:headless": "cypress run --browser electron --headless"
+    "test:e2e": "cypress run --browser electron",
+    "test:e2e:headed": "cypress run --browser electron --headed"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

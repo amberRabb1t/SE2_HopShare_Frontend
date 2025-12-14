@@ -17,6 +17,7 @@ describe('Frontend smoke', () => {
     cy.get('button[type="submit"]').click();
 
     // Expect redirect to home with protected links visible
+    cy.contains('Welcome to HopShare').should('be.visible'); // ensure login completed
     cy.url().should('include', '/');
     cy.contains('Routes').should('be.visible');
     cy.contains('Requests').should('be.visible');
