@@ -57,7 +57,8 @@ npm start
 
 4. Backend Requirements:
 - Ensure HopShare API is running (provided earlier).
-- If using mock (no Mongo), seeded demo credentials: `alice@example.com / password123`
+- If using mock (no Mongo), seeded demo credentials: `bob@example.com / password123` (regular user along with `charlie@example.com / password123`)
+- Input `alice@example.com / password123` for admin privileges
 
 ## Authentication
 
