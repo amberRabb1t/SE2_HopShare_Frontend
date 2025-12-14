@@ -236,3 +236,4 @@ input:focus, select:focus, textarea:focus {
 @media (min-width: 880px) {
   .grid.cols-3 { grid-template-columns: repeat(3,1fr); }
 }
+
