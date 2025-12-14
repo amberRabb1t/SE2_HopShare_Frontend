@@ -52,7 +52,7 @@ export default function LoginPage() {
           <button disabled={loading} type="submit">{loading ? 'Loading...' : 'Login'}</button>
         </form>
         <p style={{ marginTop: '0.75rem', fontSize: '.8rem' }}>
-          Demo user: {process.env.REACT_APP_DEMO_EMAIL} / {process.env.REACT_APP_DEMO_PASSWORD}
+          Demo user: {process.env.REACT_APP_DEMO_EMAIL || ''} / {process.env.REACT_APP_DEMO_PASSWORD || ''}
         </p>
       </div>
     </div>
