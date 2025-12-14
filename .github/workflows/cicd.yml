@@ -25,6 +25,7 @@ jobs:
           wait-on: 'http://localhost:3000'
         env:
           REACT_APP_API_BASE: https://se2-hopshare-backend.onrender.com
+          REACT_APP_BASIC_AUTH_ENABLED: true
 
   cd:
     runs-on: ubuntu-latest
@@ -36,3 +37,4 @@ jobs:
         with:
           service-id: ${{ secrets.RENDER_SERVICE_ID }}
           api-key:  ${{ secrets.RENDER_API_KEY }}
+
