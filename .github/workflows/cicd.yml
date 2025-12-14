@@ -24,7 +24,7 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3000'
         env:
-          REACT_APP_BACKEND_URL: https://se2-hopshare-backend.onrender.com
+          REACT_APP_API_BASE: https://se2-hopshare-backend.onrender.com
 
   cd:
     runs-on: ubuntu-latest
