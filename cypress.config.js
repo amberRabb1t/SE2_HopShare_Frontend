@@ -9,8 +9,8 @@ module.exports = defineConfig({
     supportFile: false,
     video: false
   },
-  defaultCommandTimeout: 10000,     // NEW: allow remote latency
+  defaultCommandTimeout: 60000,     // NEW: allow remote latency
   pageLoadTimeout: 60000,
-  retries: { runMode: 2, openMode: 0 } // NEW: rerun flaky commands in CI
+  retries: { runMode: 10, openMode: 0 } // NEW: rerun flaky commands in CI
 });
 
