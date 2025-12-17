@@ -1,4 +1,3 @@
-import React from 'react';
 import { useToast } from '../context/ToastContext.jsx';
 
 export default function ToastStack() {
@@ -22,3 +21,4 @@ export default function ToastStack() {
     </div>
   );
 }
+

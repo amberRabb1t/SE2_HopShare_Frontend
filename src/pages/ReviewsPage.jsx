@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '../context/ToastContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import * as api from '../api/reviews.js';
@@ -275,3 +275,4 @@ export default function ReviewsPage() {
     </div>
   );
 }
+

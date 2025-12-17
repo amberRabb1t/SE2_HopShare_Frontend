@@ -6,3 +6,4 @@ export function useModal() {
   const hide = useCallback(() => setOpen(false), []);
   return { open, show, hide };
 }
+

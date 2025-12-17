@@ -28,3 +28,4 @@ Report User:
 - User Profile page -> File Report modal -> POST /reports.
 
 All flows display feedback (toast) aligned with activity diagrams decision nodes (success vs missing mandatory info).
+

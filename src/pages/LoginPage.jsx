@@ -1,4 +1,3 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginSchema } from '../utils/validators.js';
@@ -58,3 +57,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

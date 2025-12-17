@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function RatingStars({ value, onChange }) {
   return (
     <div className="rating-stars">
@@ -17,3 +15,4 @@ export default function RatingStars({ value, onChange }) {
     </div>
   );
 }
+

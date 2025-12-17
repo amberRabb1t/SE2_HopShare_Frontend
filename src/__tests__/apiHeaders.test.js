@@ -1,5 +1,5 @@
 import client from '../api/client.js';
-import { getAuth } from '../context/AuthContext.jsx';
+// import { getAuth } from '../context/AuthContext.jsx';
 
 test('mutating request includes Authorization header when auth set', async () => {
   // mimic auth
@@ -12,3 +12,4 @@ test('mutating request includes Authorization header when auth set', async () =>
   headers['Authorization'] = `Basic ${token}`;
   expect(headers['Authorization']).toBe(`Basic ${token}`);
 });
+

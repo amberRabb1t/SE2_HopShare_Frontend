@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { STORAGE_KEY } from '../utils/constants.js';
 import client from '../api/client.js';
 import * as usersApi from '../api/users.js';
@@ -129,3 +129,4 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   return useContext(AuthContext);
 }
+

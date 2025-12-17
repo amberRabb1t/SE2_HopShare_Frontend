@@ -15,3 +15,4 @@ export async function getReport(reportID) {
   const resp = await client.get(`/reports/${reportID}`);
   return unwrap(resp);
 }
+

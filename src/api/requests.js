@@ -25,3 +25,4 @@ export async function deleteRequest(id) {
   const resp = await client.delete(`/requests/${id}`);
   return unwrap(resp);
 }
+

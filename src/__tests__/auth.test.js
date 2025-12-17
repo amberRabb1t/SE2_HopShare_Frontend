@@ -13,3 +13,4 @@ test('login stores credentials', async () => {
   expect(result.current.email).toBe('test@example.com');
   expect(result.current.password).toBe('pw');
 });
+

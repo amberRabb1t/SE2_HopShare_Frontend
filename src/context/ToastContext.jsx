@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useCallback, useState } from 'react';
+import { createContext, useContext, useCallback, useState } from 'react';
 
 const ToastContext = createContext({
   push: () => {},
@@ -32,3 +32,4 @@ export function ToastProvider({ children }) {
 export function useToast() {
   return useContext(ToastContext);
 }
+

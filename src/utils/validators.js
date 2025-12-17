@@ -41,3 +41,4 @@ export const loginSchema = yup.object({
   password: yup.string().min(6, 'Password must be at least 6 characters').required('Password required'),
   remember: yup.boolean()
 });
+

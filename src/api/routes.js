@@ -25,3 +25,4 @@ export async function deleteRoute(id) {
   const resp = await client.delete(`/routes/${id}`);
   return unwrap(resp);
 }
+

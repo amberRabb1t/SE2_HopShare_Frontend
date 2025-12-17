@@ -26,3 +26,4 @@ export async function deleteUser(userID) {
   const resp = await client.delete(`/users/${userID}`);
   return unwrap(resp);
 }
+

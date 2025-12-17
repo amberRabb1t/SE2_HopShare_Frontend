@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 
 export default function Modal({ open, onClose, title, children }) {
@@ -22,3 +21,4 @@ Modal.propTypes = {
   title: PropTypes.string,
   children: PropTypes.node
 };
+

@@ -21,3 +21,4 @@ Fallback Behavior:
 
 Future Additions:
 - Conversations & Messages (not implemented here) can reuse pattern with nested resource path segments.
+

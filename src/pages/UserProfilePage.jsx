@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import * as usersApi from '../api/users.js';
 import * as reportsApi from '../api/reports.js';
@@ -83,3 +83,4 @@ export default function UserProfilePage() {
     </div>
   );
 }
+
