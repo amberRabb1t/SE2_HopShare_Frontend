@@ -1,7 +1,5 @@
 # User Flows Mapping
 
-Images referenced: ![image1](image1) ![image2](image2) ![image3](image3) ![image4](image4)
-
 Manage Car:
 - My Cars page lists cars.
 - Add Car modal -> validate -> POST /users/{userID}/cars -> success toast -> refresh in local state.

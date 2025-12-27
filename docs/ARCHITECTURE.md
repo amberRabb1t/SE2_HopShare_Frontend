@@ -1,7 +1,5 @@
 # HopShare Frontend Architecture
 
-Images referenced: ![image1](image1) ![image2](image2) ![image3](image3) ![image4](image4)
-
 Layers:
 1. Pages: Map to routes, orchestrate data fetching and composition.
 2. Components: Presentational or small state (Modal, RatingStars, Confirm, NavBar).
@@ -21,7 +19,4 @@ Extending:
 - Add new endpoint by creating `api/<entity>.js`.
 - Add form validation schema.
 - Create page component + route definition.
-
-Testing:
-- Focus on context and interceptor behaviors.
 
