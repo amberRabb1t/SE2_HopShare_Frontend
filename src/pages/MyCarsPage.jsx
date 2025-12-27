@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { carSchema } from '../utils/validators.js';
 import { parseDateToUnix, formatUnix } from '../utils/formatters.js';
-import * as usersApi from '../api/users.js';
+import { listUsers } from '../api/users.js';
 
 export default function MyCarsPage() {
   const toast = useToast();
@@ -33,7 +33,7 @@ export default function MyCarsPage() {
     if (user?.UserID) return user.UserID;
     if (!email) return undefined;
     try {
-      const all = await usersApi.listUsers();
+      const all = await listUsers();
       const found = all.find(u => u.Email?.toLowerCase() === email.toLowerCase());
       if (found) {
         setUser(found);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import * as usersApi from '../api/users.js';
-import * as reportsApi from '../api/reports.js';
+import { getUser } from '../api/users.js';
+import {createReport } from '../api/reports.js';
 import { useToast } from '../context/ToastContext.jsx';
 import Modal from '../components/Modal.jsx';
 import { useForm } from 'react-hook-form';
@@ -25,7 +25,7 @@ export default function UserProfilePage() {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const u = await usersApi.getUser(userID);
+        const u = await getUser(userID);
         setUser(u);
       } catch (err) {
         toast.push('error', err.message || 'Failed to load user');
@@ -36,7 +36,7 @@ export default function UserProfilePage() {
 
   async function submitReport(values) {
     try {
-      const created = await reportsApi.createReport(values);
+      await createReport(values);
       toast.push('success', 'Report filed');
       setShowReport(false);
     } catch (err) {

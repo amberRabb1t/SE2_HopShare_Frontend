@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useToast } from '../context/ToastContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import * as api from '../api/reviews.js';
-import * as usersApi from '../api/users.js';
+import { listUsers } from '../api/users.js';
 import Modal from '../components/Modal.jsx';
 import Confirm from '../components/Confirm.jsx';
 import UserSelectModal from '../components/UserSelectModal.jsx';
@@ -42,7 +42,7 @@ export default function ReviewsPage() {
     if (user?.UserID) return user.UserID;
     if (!email) return undefined;
     try {
-      const all = await usersApi.listUsers();
+      const all = await listUsers();
       const found = (all || []).find(u => u.Email?.toLowerCase() === email.toLowerCase());
       if (found) {
         setUser(found);
@@ -83,7 +83,7 @@ export default function ReviewsPage() {
     // Resolve display username from ReviewedUser ID (best effort)
     let username = '';
     try {
-      const all = await usersApi.listUsers(r.Name || '');
+      const all = await listUsers(r.Name || '');
       const match = all.find(u => u.UserID === r.ReviewedUser);
       if (match) username = match.Name;
     } catch { /* ignore */ }
