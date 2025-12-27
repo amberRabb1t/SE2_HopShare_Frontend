@@ -7,8 +7,6 @@ Leverages:
 - OpenAPI backend (HopShare API)
 - User stories for interaction design
 
-Images referenced: ![image1](image1) ![image2](image2) ![image3](image3) ![image4](image4)
-
 ## Features Implemented
 
 Screens (more than 4 required):
@@ -56,7 +54,7 @@ npm start
 ```
 
 4. Backend Requirements:
-- Ensure HopShare API is running (provided earlier).
+- Ensure HopShare API is running
 - If using mock (no Mongo), seeded demo credentials: `bob@example.com / password123`
 - Other regular user: `charlie@example.com / password123`
 - Input `alice@example.com / password123` for admin privileges
@@ -112,9 +110,12 @@ Mandatory fields enforced according to OpenAPI required arrays.
 
 - `npm start` - Dev server
 - `npm build` - Production build
-- `npm test` - Jest/RTL tests (basic scaffolding)
+- `npm test` - Jest/RTL tests (basic scaffolding) [not implemented]
 - `npm lint` - ESLint
 - `npm format` - Prettier
+- `npm run test:e2e` - Cypress tests (headless)
+- `npm run test:e2e:headed` - Cypress tests (headed)
+- `npm run cypress:open` - Cypress tests (interactive)
 
 ## Extensibility
 
@@ -135,17 +136,6 @@ Add new resource:
 - Semantic HTML (buttons, labels, aria-live for toasts)
 - Focus states and keyboard navigation for modals/forms
 - Color contrast chosen for readability
-
-## Testing (Sample)
-
-```bash
-npm test
-```
-
-Basic tests ensure:
-- AuthContext stores credentials
-- API client attaches headers for protected methods
-- Car list renders fetched data
 
 ## License
 

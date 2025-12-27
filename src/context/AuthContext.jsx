@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { STORAGE_KEY } from '../utils/constants.js';
 import client from '../api/client.js';
-import * as usersApi from '../api/users.js';
+import { listUsers } from '../api/users.js';
 
 let currentAuth = null;
 export function getAuth() {
@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
   async function hydrateUserByEmail(e) {
     if (!e) return;
     try {
-      const all = await usersApi.listUsers(); // returns array of users
+      const all = await listUsers(); // returns array of users
       const found = (all || []).find(u => u.Email?.toLowerCase() === e.toLowerCase());
       if (found) {
         setUser(found);
