@@ -9,6 +9,12 @@ import UserProfilePage from '../pages/UserProfilePage.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 
+/*
+  Application Route Component
+  Defines the main application routes using React Router.
+  Wraps protected routes with the ProtectedRoute component to ensure authentication.
+*/
+
 export default function AppRouter() {
   return (
     <Routes>

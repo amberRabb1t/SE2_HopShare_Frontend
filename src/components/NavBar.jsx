@@ -1,6 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
+/*
+  Navigation bar component with links to different screens.
+  Displays different navigation options depending on whether the user is logged in.
+  Logged in users can access "My Cars", "Routes", "Requests", and "Reviews".
+  Also displays the user's email and a logout button.
+  Guests can only see "Home" and "Login".
+*/
+
 export default function NavBar() {
   const { email, logout } = useAuth();
   const loc = useLocation();

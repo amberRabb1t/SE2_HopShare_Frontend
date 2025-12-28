@@ -8,14 +8,20 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { requestSchema } from '../utils/validators.js';
 import { parseDateTimeToUnix, formatUnix } from '../utils/formatters.js';
 
-export default function RequestsPage() {
-  const toast = useToast();
-  const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [editing, setEditing] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(null);
+/*
+  Requests page component: allows a user to view, create, edit, and delete Requests.
+*/
 
+export default function RequestsPage() {
+  // Component state
+  const toast = useToast(); // Toast notification context
+  const [requests, setRequests] = useState([]); // List of requests
+  const [loading, setLoading] = useState(false); // Loading state
+  const [editing, setEditing] = useState(null); // Currently editing request
+  const [showForm, setShowForm] = useState(false); // Show/hide form modal
+  const [confirmDelete, setConfirmDelete] = useState(null); // Prompt to confirm deletion
+
+  // Form setup
   const form = useForm({
     resolver: yupResolver(requestSchema),
     defaultValues: {
@@ -26,6 +32,7 @@ export default function RequestsPage() {
     }
   });
 
+  // Fetch Requests from API
   async function refresh() {
     setLoading(true);
     try {
@@ -38,14 +45,17 @@ export default function RequestsPage() {
     }
   }
 
+  // Initial load
   useEffect(() => { refresh(); }, []);
 
+  // Open form to add new request
   function openAdd() {
     setEditing(null);
     form.reset({ Start: '', End: '', DateAndTime: '', Description: '' });
     setShowForm(true);
   }
 
+  // Open form to edit existing request
   function openEdit(item) {
     setEditing(item);
     const dtLocal = item.DateAndTime ? new Date(item.DateAndTime * 1000).toISOString().slice(0,16) : '';
@@ -58,6 +68,7 @@ export default function RequestsPage() {
     setShowForm(true);
   }
 
+  // Handle form submission for create/edit
   async function onSubmit(values) {
     const payload = {
       ...values,
@@ -79,6 +90,7 @@ export default function RequestsPage() {
     }
   }
 
+  // Handle Request deletion
   async function performDelete() {
     try {
       await api.deleteRequest(confirmDelete.RequestID);
@@ -91,6 +103,7 @@ export default function RequestsPage() {
     }
   }
 
+  // Render component
   return (
     <div className="container">
       <div className="panel">

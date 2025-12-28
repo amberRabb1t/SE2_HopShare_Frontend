@@ -1,5 +1,12 @@
 import * as yup from 'yup';
 
+/*
+  Validation schemas for various forms using Yup.
+  The fields correspond to form inputs and API requirements;
+  they are a subset of the full data models, specifically the
+  parts that the user enters through the UI.
+*/
+
 export const carSchema = yup.object({
   Seats: yup.number().integer().min(1).required('Seats required'),
   ServiceDate: yup.string().required('Service date required'),

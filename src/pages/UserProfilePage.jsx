@@ -8,12 +8,19 @@ import { useForm } from 'react-hook-form';
 import { reportSchema } from '../utils/validators.js';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-export default function UserProfilePage() {
-  const { userID } = useParams();
-  const toast = useToast();
-  const [user, setUser] = useState(null);
-  const [showReport, setShowReport] = useState(false);
+/*
+  UserProfilePage component: displays a user's profile.
+  Includes option to file a report against the user.
+*/
 
+export default function UserProfilePage() {
+  // Context and state
+  const { userID } = useParams(); // get userID from route params
+  const toast = useToast(); // toast notifications
+  const [user, setUser] = useState(null); // user profile data
+  const [showReport, setShowReport] = useState(false); // report modal visibility
+
+  // Form setup for reporting user
   const form = useForm({
     resolver: yupResolver(reportSchema),
     defaultValues: {
@@ -22,6 +29,7 @@ export default function UserProfilePage() {
     }
   });
 
+  // Fetch user profile on mount or when userID changes
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -34,6 +42,7 @@ export default function UserProfilePage() {
     fetchUser();
   }, [userID, toast]);
 
+  // Handle report submission
   async function submitReport(values) {
     try {
       await createReport(values);
@@ -44,6 +53,7 @@ export default function UserProfilePage() {
     }
   }
 
+  // Render component
   return (
     <div className="container">
       <div className="panel">

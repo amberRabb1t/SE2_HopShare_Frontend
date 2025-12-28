@@ -13,21 +13,28 @@ import RatingStars from '../components/RatingStars.jsx';
 import { formatUnix } from '../utils/formatters.js';
 import { resolveUsernameForReview } from '../utils/userLookup.js';
 
+/*
+  ReviewsPage component: allows users to view reviews about them,
+  manage their own reviews, and write new reviews for other users.
+*/
+
 export default function ReviewsPage() {
-  const toast = useToast();
-  const { user, email, setUser } = useAuth();
-  const [myReviews, setMyReviews] = useState([]);
-  const [aboutReviews, setAboutReviews] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [editingReview, setEditingReview] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(null);
+  // Hooks and state
+  const toast = useToast(); // for user notifications
+  const { user, email, setUser } = useAuth(); // get current user info
+  const [myReviews, setMyReviews] = useState([]); // reviews written by the user
+  const [aboutReviews, setAboutReviews] = useState([]); // reviews about the user
+  const [loading, setLoading] = useState(false);  // loading state
+  const [editingReview, setEditingReview] = useState(null); // review being edited
+  const [showForm, setShowForm] = useState(false);  // show/hide review form
+  const [confirmDelete, setConfirmDelete] = useState(null); // review to delete
 
   // Disambiguation state
   const [disambiguateOpen, setDisambiguateOpen] = useState(false);
   const [candidateUsers, setCandidateUsers] = useState([]);
   const [pendingPayload, setPendingPayload] = useState(null); // stores form values while selecting candidate
 
+  // Form setup
   const form = useForm({
     resolver: yupResolver(reviewSchema),
     defaultValues: {
@@ -38,6 +45,7 @@ export default function ReviewsPage() {
     }
   });
 
+  // Ensure we have a UserID for the current user; fetch if necessary
   async function ensureUserID() {
     if (user?.UserID) return user.UserID;
     if (!email) return undefined;
@@ -52,6 +60,7 @@ export default function ReviewsPage() {
     return undefined;
   }
 
+  // Load reviews for the current user
   async function refresh() {
     const id = await ensureUserID();
     if (!id) return;
@@ -68,16 +77,19 @@ export default function ReviewsPage() {
     }
   }
 
+  // Load reviews when user ID or email changes
   useEffect(() => {
     refresh();
   }, [user?.UserID, email]);
 
+  // Open form to add new review
   function openAdd() {
     setEditingReview(null);
     form.reset({ Rating: 0, UserType: true, Description: '', ReviewedUserName: '' });
     setShowForm(true);
   }
 
+  // Open form to edit existing review
   async function openEdit(r) {
     setEditingReview(r);
     // Resolve display username from ReviewedUser ID (best effort)
@@ -96,6 +108,7 @@ export default function ReviewsPage() {
     setShowForm(true);
   }
 
+  // Create or update a review; called by onSubmit after resolving user IDs
   async function createOrUpdate(authorId, reviewedUserId, values) {
     const payload = {
       Rating: values.Rating,
@@ -103,7 +116,6 @@ export default function ReviewsPage() {
       Description: values.Description || '',
       ReviewedUser: reviewedUserId
     };
-
     if (editingReview) {
       const updated = await api.updateReview(authorId, editingReview.ReviewID, payload);
       setMyReviews(myReviews.map(m => m.ReviewID === editingReview.ReviewID ? updated : m));
@@ -117,19 +129,18 @@ export default function ReviewsPage() {
     setEditingReview(null);
   }
 
+  // Handle form submission for creating/updating review
   async function onSubmit(values) {
     const authorId = await ensureUserID();
     if (!authorId) {
       toast.push('error', 'User ID not resolved; cannot save review');
       return;
     }
-
     // Editing: ReviewedUserName is read-only; just use existing ReviewedUser
     if (editingReview) {
       await createOrUpdate(authorId, editingReview.ReviewedUser, values);
       return;
     }
-
     // New review: resolve username
     try {
       const resolution = await resolveUsernameForReview(values.ReviewedUserName);
@@ -150,6 +161,7 @@ export default function ReviewsPage() {
     }
   }
 
+  // Handle candidate selection from disambiguation modal
   function handleCandidateSelect(userObj) {
     setDisambiguateOpen(false);
     if (!pendingPayload || !userObj?.UserID) {
@@ -162,6 +174,7 @@ export default function ReviewsPage() {
     setCandidateUsers([]);
   }
 
+  // Perform review deletion; called after confirmation
   async function performDelete() {
     const id = user?.UserID;
     if (!id) {
@@ -180,6 +193,7 @@ export default function ReviewsPage() {
     }
   }
 
+  // Render component
   return (
     <div className="container">
       <div className="panel">

@@ -10,15 +10,21 @@ import { carSchema } from '../utils/validators.js';
 import { parseDateToUnix, formatUnix } from '../utils/formatters.js';
 import { listUsers } from '../api/users.js';
 
-export default function MyCarsPage() {
-  const toast = useToast();
-  const { user, email, setUser } = useAuth();
-  const [cars, setCars] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [editingCar, setEditingCar] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(null);
+/*
+  MyCarsPage component: allows a user to view and manage their cars.
+*/
 
+export default function MyCarsPage() {
+  // Context and state
+  const toast = useToast(); // For displaying notifications
+  const { user, email, setUser } = useAuth(); // Auth context
+  const [cars, setCars] = useState([]); // List of user's cars
+  const [loading, setLoading] = useState(false); // Loading state
+  const [editingCar, setEditingCar] = useState(null); // Car being edited
+  const [showForm, setShowForm] = useState(false); // Show/hide form modal
+  const [confirmDelete, setConfirmDelete] = useState(null); // Prompt for delete confirmation
+
+  // Form setup using react-hook-form and yup for validation
   const form = useForm({
     resolver: yupResolver(carSchema),
     defaultValues: {
@@ -29,6 +35,7 @@ export default function MyCarsPage() {
     }
   });
 
+  // Ensure we have the user's ID; fetch user data if necessary
   async function ensureUserID() {
     if (user?.UserID) return user.UserID;
     if (!email) return undefined;
@@ -45,6 +52,7 @@ export default function MyCarsPage() {
     return undefined;
   }
 
+  // Fetch the user's cars from the API
   async function refresh() {
     const id = await ensureUserID();
     if (!id) return;
@@ -59,16 +67,19 @@ export default function MyCarsPage() {
     }
   }
 
+  // Load cars on component mount or when user ID/email changes
   useEffect(() => {
     refresh();
   }, [user?.UserID, email]);
 
+  // Open the form modal for adding a new car
   function openAdd() {
     setEditingCar(null);
     form.reset({ Seats: '', ServiceDate: '', MakeModel: '', LicensePlate: '' });
     setShowForm(true);
   }
 
+  // Open the form modal for editing an existing car
   function openEdit(car) {
     setEditingCar(car);
     const dateLocal = car.ServiceDate ? new Date(car.ServiceDate * 1000).toISOString().slice(0,10) : '';
@@ -81,6 +92,7 @@ export default function MyCarsPage() {
     setShowForm(true);
   }
 
+  // Handle form submission for adding/editing a car
   async function onSubmit(values) {
     const userID = await ensureUserID();
     if (!userID) {
@@ -107,6 +119,7 @@ export default function MyCarsPage() {
     }
   }
 
+  // Handle car deletion after confirmation
   async function performDelete() {
     const userID = user?.UserID;
     if (!userID) {
@@ -125,6 +138,7 @@ export default function MyCarsPage() {
     }
   }
 
+  // Render component
   return (
     <div className="container">
       <div className="panel">

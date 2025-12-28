@@ -8,14 +8,20 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { routeSchema } from '../utils/validators.js';
 import { parseDateTimeToUnix, formatUnix } from '../utils/formatters.js';
 
-export default function RoutesPage() {
-  const toast = useToast();
-  const [routes, setRoutes] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [editing, setEditing] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(null);
+/*
+  RoutesPage component: allows users to view, create, edit, and delete routes.
+*/
 
+export default function RoutesPage() {
+  // State variables
+  const toast = useToast(); // toast notifications
+  const [routes, setRoutes] = useState([]); // list of Routes
+  const [loading, setLoading] = useState(false); // loading state
+  const [editing, setEditing] = useState(null); // currently editing route
+  const [showForm, setShowForm] = useState(false); // form modal visibility
+  const [confirmDelete, setConfirmDelete] = useState(null); // delete confirmation modal state
+
+  // Form setup using react-hook-form and yup for validation
   const form = useForm({
     resolver: yupResolver(routeSchema),
     defaultValues: {
@@ -28,6 +34,7 @@ export default function RoutesPage() {
     }
   });
 
+  // Fetch Routes from API
   async function refresh() {
     setLoading(true);
     try {
@@ -40,8 +47,10 @@ export default function RoutesPage() {
     }
   }
 
+  // Initial data load
   useEffect(() => { refresh(); }, []);
 
+  // Open form for adding a new route
   function openAdd() {
     setEditing(null);
     form.reset({
@@ -55,6 +64,7 @@ export default function RoutesPage() {
     setShowForm(true);
   }
 
+  // Open form for editing an existing route
   function openEdit(item) {
     setEditing(item);
     // Pre-fill with human-readable datetime-local value from existing unix seconds
@@ -70,6 +80,7 @@ export default function RoutesPage() {
     setShowForm(true);
   }
 
+  // Handle form submission for creating or updating a route
   async function onSubmit(values) {
     const payload = {
       ...values,
@@ -91,6 +102,7 @@ export default function RoutesPage() {
     }
   }
 
+  // Handle route deletion after confirmation
   async function performDelete() {
     try {
       await api.deleteRoute(confirmDelete.RouteID);
@@ -103,6 +115,7 @@ export default function RoutesPage() {
     }
   }
 
+  // Render component
   return (
     <div className="container">
       <div className="panel">

@@ -1,5 +1,9 @@
 import { Link } from 'react-router-dom';
 
+/*
+  Just a simple 404 Not Found page.
+*/
+
 export default function NotFoundPage() {
   return (
     <div className="container">

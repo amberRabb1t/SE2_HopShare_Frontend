@@ -1,5 +1,13 @@
 import PropTypes from 'prop-types';
 
+/**
+ * Generic Modal component. Displays children content when open is true.
+ * @param {Object} props
+ * @param {boolean} props.open - Whether the modal is open.
+ * @param {Function} props.onClose - Callback to close the modal.
+ * @param {string} props.title - Title of the modal.
+ * @param {React.ReactNode} props.children - Content to display inside the modal.
+ */
 export default function Modal({ open, onClose, title, children }) {
   if (!open) return null;
   return (

@@ -5,11 +5,18 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { useNavigate } from 'react-router-dom';
 
+/*
+  LoginPage component: allows users to log in by providing their email and password.
+  It uses react-hook-form for form management and yup for validation.
+*/
+
 export default function LoginPage() {
+  // Contexts and hooks
   const { login, loading } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
 
+  // Form setup with validation
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(loginSchema),
     defaultValues: {
@@ -19,6 +26,7 @@ export default function LoginPage() {
     }
   });
 
+  // Form submission handler
   async function onSubmit(values) {
     const res = await login(values);
     if (res.success) {
@@ -29,6 +37,7 @@ export default function LoginPage() {
     }
   }
 
+  // Render the login form
   return (
     <div className="container">
       <div className="panel" style={{ maxWidth: 420, margin: '0 auto' }}>

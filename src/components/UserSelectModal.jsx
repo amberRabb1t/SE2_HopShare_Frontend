@@ -4,6 +4,11 @@ import Modal from './Modal.jsx';
 /**
  * Modal listing candidate users for disambiguation.
  * Each candidate should have UserID, Name, Email.
+ * @param {Object} props
+ * @param {boolean} props.open - Whether the modal is open.
+ * @param {Function} props.onClose - Callback to close the modal.
+ * @param {Array} props.candidates - Array of candidate user objects.
+ * @param {Function} props.onSelect - Callback when a user is selected.
  */
 export default function UserSelectModal({ open, onClose, candidates, onSelect }) {
   return (
