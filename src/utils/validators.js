@@ -7,6 +7,7 @@ import * as yup from 'yup';
   parts that the user enters through the UI.
 */
 
+// Everything needed for Car creation/editing form
 export const carSchema = yup.object({
   Seats: yup.number().integer().min(1).required('Seats required'),
   ServiceDate: yup.string().required('Service date required'),
@@ -14,6 +15,7 @@ export const carSchema = yup.object({
   LicensePlate: yup.string().required('License plate required')
 });
 
+// Everything needed for Route creation/editing form
 export const routeSchema = yup.object({
   Start: yup.string().required('Start required'),
   End: yup.string().required('End required'),
@@ -23,6 +25,7 @@ export const routeSchema = yup.object({
   Comment: yup.string().nullable()
 });
 
+// Everything needed for Request creation/editing form
 export const requestSchema = yup.object({
   Start: yup.string().required('Start required'),
   End: yup.string().required('End required'),
@@ -30,6 +33,7 @@ export const requestSchema = yup.object({
   Description: yup.string().nullable()
 });
 
+// Everything needed for Review creation/editing form
 // CHANGED: ReviewedUser replaced by ReviewedUserName (username string)
 export const reviewSchema = yup.object({
   Rating: yup.number().min(0).max(5).required('Rating required'),
@@ -38,11 +42,13 @@ export const reviewSchema = yup.object({
   ReviewedUserName: yup.string().required('Target username required')
 });
 
+// Everything needed for Report creation form
 export const reportSchema = yup.object({
   Description: yup.string().required('Description required'),
   ReportedUser: yup.number().integer().required()
 });
 
+// Everything needed for Login form
 export const loginSchema = yup.object({
   email: yup.string().email('Invalid email').required('Email required'),
   password: yup.string().min(6, 'Password must be at least 6 characters').required('Password required'),

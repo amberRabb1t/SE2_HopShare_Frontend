@@ -26,19 +26,24 @@ export async function classifyUsername(username) {
     return { status: 'notfound' };
   }
 
+  // Check for exact matches
   const exact = results.filter(u => u.Name?.toLowerCase() === term.toLowerCase());
+  // Exact match found
   if (exact.length === 1) {
     return { status: 'exact', match: exact[0] };
   }
+  // Multiple exact matches found
   if (exact.length > 1) {
     return { status: 'duplicates', matches: exact };
   }
 
   // No exact matches; identify partial matches (defensive, though results already partial)
   const partial = results.filter(u => u.Name?.toLowerCase().includes(term.toLowerCase()));
+  // Single partial match
   if (partial.length === 1) {
     return { status: 'partial-single', match: partial[0] };
   }
+  // Multiple partial matches
   if (partial.length > 1) {
     return { status: 'partial-ambiguous', matches: partial };
   }
