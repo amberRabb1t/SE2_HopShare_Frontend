@@ -12,9 +12,9 @@ import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   // Contexts and hooks
-  const { login, loading } = useAuth();
-  const toast = useToast();
-  const navigate = useNavigate();
+  const { login, loading } = useAuth(); // Authentication context
+  const toast = useToast(); // Toast notification context
+  const navigate = useNavigate(); // Navigation hook
 
   // Form setup with validation
   const { register, handleSubmit, formState: { errors } } = useForm({

@@ -61,7 +61,7 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<NotFoundPage />} />
+      <Route path="*" element={<NotFoundPage />} />  {/* Catch-all route for 404 Not Found */}
     </Routes>
   );
 }

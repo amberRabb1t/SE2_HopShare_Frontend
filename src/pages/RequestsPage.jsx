@@ -90,7 +90,7 @@ export default function RequestsPage() {
     }
   }
 
-  // Handle Request deletion
+  // Handle Request deletion; called after confirmation
   async function performDelete() {
     try {
       await api.deleteRequest(confirmDelete.RequestID);
