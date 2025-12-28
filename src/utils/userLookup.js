@@ -1,4 +1,4 @@
-import * as usersApi from '../api/users.js';
+import { listUsers } from '../api/users.js';
 
 /**
  * Classify username input against user list.
@@ -20,35 +20,14 @@ export async function classifyUsername(username) {
   if (!term) return { status: 'notfound' };
 
   // Fetch possible matches (server performs substring filter)
-  const results = await usersApi.listUsers(term) || [];
+  const results = await listUsers(term) || [];
 
   if (results.length === 0) {
     return { status: 'notfound' };
   }
 
-  // Check for exact matches
-  const exact = results.filter(u => u.Name?.toLowerCase() === term.toLowerCase());
-  // Exact match found
-  if (exact.length === 1) {
-    return { status: 'exact', match: exact[0] };
-  }
-  // Multiple exact matches found
-  if (exact.length > 1) {
-    return { status: 'duplicates', matches: exact };
-  }
-
-  // No exact matches; identify partial matches (defensive, though results already partial)
-  const partial = results.filter(u => u.Name?.toLowerCase().includes(term.toLowerCase()));
-  // Single partial match
-  if (partial.length === 1) {
-    return { status: 'partial-single', match: partial[0] };
-  }
-  // Multiple partial matches
-  if (partial.length > 1) {
-    return { status: 'partial-ambiguous', matches: partial };
-  }
-
-  return { status: 'notfound' };
+  // Check for matches - partial or exact - and return the result
+  return checkForMatches(results, term);
 }
 
 /**
@@ -78,5 +57,26 @@ export async function resolveUsernameForReview(username) {
     default:
       return { error: 'No user found with that username.' };
   }
+}
+
+function checkForMatches(users, term) {
+  // Check for exact matches
+  const exact = users.filter(u => u.Name?.toLowerCase() === term.toLowerCase());
+  if (exact.length === 1) { // Exact match found
+    return { status: 'exact', match: exact[0] };
+  }
+  if (exact.length > 1) { // Multiple exact matches found
+    return { status: 'duplicates', matches: exact };
+  }
+  // No exact matches; identify partial matches (defensive, though results already partial)
+  const partial = users.filter(u => u.Name?.toLowerCase().includes(term.toLowerCase()));
+  if (partial.length === 1) { // Single partial match
+    return { status: 'partial-single', match: partial[0] };
+  }
+  if (partial.length > 1) { // Multiple partial matches
+    return { status: 'partial-ambiguous', matches: partial };
+  }
+  // If none of the conditional statements were entered, then no matches were found
+  return { status: 'notfound' };
 }
 
