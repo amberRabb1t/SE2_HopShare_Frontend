@@ -13,4 +13,5 @@ Before running:
 Run:
 - Interactive: `npm run cypress:open`
 - Headless: `npm run test:e2e`
+- Headed: `npm run test:e2e:headed`
 

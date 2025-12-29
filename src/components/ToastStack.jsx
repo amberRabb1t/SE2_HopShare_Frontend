@@ -1,5 +1,11 @@
-import React from 'react';
 import { useToast } from '../context/ToastContext.jsx';
+
+/*
+  Component displaying a stack of toast notifications.
+  Props:
+    - toasts: array of toast objects with id, message, and type
+    - remove: function to remove a toast by id
+*/
 
 export default function ToastStack() {
   const { toasts, remove } = useToast();
@@ -22,3 +28,4 @@ export default function ToastStack() {
     </div>
   );
 }
+

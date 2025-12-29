@@ -1,6 +1,11 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+
+/*
+  HomePage component: displays a welcome message and navigation links.
+  These links are conditionally rendered based on the user's authentication status.
+  They include links to the "My Cars", "Routes", "Requests", and "Reviews" pages.
+*/
 
 export default function HomePage() {
   const { email } = useAuth();
@@ -40,3 +45,4 @@ export default function HomePage() {
     </div>
   );
 }
+

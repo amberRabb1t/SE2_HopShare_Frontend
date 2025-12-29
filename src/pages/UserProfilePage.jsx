@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import * as usersApi from '../api/users.js';
-import * as reportsApi from '../api/reports.js';
+import { getUser } from '../api/users.js';
+import {createReport } from '../api/reports.js';
 import { useToast } from '../context/ToastContext.jsx';
 import Modal from '../components/Modal.jsx';
 import { useForm } from 'react-hook-form';
 import { reportSchema } from '../utils/validators.js';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-export default function UserProfilePage() {
-  const { userID } = useParams();
-  const toast = useToast();
-  const [user, setUser] = useState(null);
-  const [showReport, setShowReport] = useState(false);
+/*
+  UserProfilePage component: displays a user's profile.
+  Includes option to file a report against the user.
+*/
 
+export default function UserProfilePage() {
+  // Context and state
+  const { userID } = useParams(); // get userID from route params
+  const toast = useToast(); // toast notifications
+  const [user, setUser] = useState(null); // user profile data
+  const [showReport, setShowReport] = useState(false); // report modal visibility
+
+  // Form setup for reporting user
   const form = useForm({
     resolver: yupResolver(reportSchema),
     defaultValues: {
@@ -22,10 +29,11 @@ export default function UserProfilePage() {
     }
   });
 
+  // Fetch user profile on mount or when userID changes
   useEffect(() => {
     async function fetchUser() {
       try {
-        const u = await usersApi.getUser(userID);
+        const u = await getUser(userID);
         setUser(u);
       } catch (err) {
         toast.push('error', err.message || 'Failed to load user');
@@ -34,9 +42,10 @@ export default function UserProfilePage() {
     fetchUser();
   }, [userID, toast]);
 
+  // Handle report submission
   async function submitReport(values) {
     try {
-      const created = await reportsApi.createReport(values);
+      await createReport(values);
       toast.push('success', 'Report filed');
       setShowReport(false);
     } catch (err) {
@@ -44,6 +53,7 @@ export default function UserProfilePage() {
     }
   }
 
+  // Render component
   return (
     <div className="container">
       <div className="panel">
@@ -83,3 +93,4 @@ export default function UserProfilePage() {
     </div>
   );
 }
+

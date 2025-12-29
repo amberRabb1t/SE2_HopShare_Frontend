@@ -2,6 +2,13 @@ import axios from 'axios';
 import { API_BASE, BASIC_AUTH_ENABLED } from '../utils/constants.js';
 import { getAuth } from '../context/AuthContext.jsx';
 
+/*
+  Axios client with interceptors for:
+  - Adding Basic Auth header for mutating requests if enabled
+  - Normalizing error responses
+  This is used throughout the app for backend API calls.
+*/
+
 const client = axios.create({
   baseURL: API_BASE,
   timeout: 8000
@@ -31,3 +38,4 @@ client.interceptors.response.use(
 );
 
 export default client;
+

@@ -1,4 +1,13 @@
-import React, { createContext, useContext, useCallback, useState } from 'react';
+import { createContext, useContext, useCallback, useState } from 'react';
+
+/*
+  ToastContext provides a way to show toast notifications across the app.
+  It exposes two main functions:
+  - push(type, message, ttl): to add a new toast notification.
+  - remove(id): to remove a specific toast notification by its id.
+
+  The context also maintains a list of current toasts.
+*/
 
 const ToastContext = createContext({
   push: () => {},
@@ -32,3 +41,4 @@ export function ToastProvider({ children }) {
 export function useToast() {
   return useContext(ToastContext);
 }
+

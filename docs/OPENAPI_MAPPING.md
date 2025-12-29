@@ -1,7 +1,5 @@
 # OpenAPI Endpoint Coverage
 
-Images referenced: ![image1](image1) ![image2](image2) ![image3](image3) ![image4](image4)
-
 Covered Endpoints:
 - Routes: GET /routes, POST /routes, PUT /routes/:routeID, DELETE /routes/:routeID
 - Requests: GET /requests, POST /requests, PUT /requests/:requestID, DELETE /requests/:requestID
@@ -21,3 +19,4 @@ Fallback Behavior:
 
 Future Additions:
 - Conversations & Messages (not implemented here) can reuse pattern with nested resource path segments.
+

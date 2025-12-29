@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from '../pages/HomePage.jsx';
 import LoginPage from '../pages/LoginPage.jsx';
@@ -9,6 +8,12 @@ import ReviewsPage from '../pages/ReviewsPage.jsx';
 import UserProfilePage from '../pages/UserProfilePage.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
+
+/*
+  Application Route Component
+  Defines the main application routes using React Router.
+  Wraps protected routes with the ProtectedRoute component to ensure authentication.
+*/
 
 export default function AppRouter() {
   return (
@@ -56,7 +61,8 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<NotFoundPage />} />
+      <Route path="*" element={<NotFoundPage />} />  {/* Catch-all route for 404 Not Found */}
     </Routes>
   );
 }
+
